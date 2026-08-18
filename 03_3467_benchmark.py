@@ -1,7 +1,7 @@
 import random
 import time
 import sys
-from AP_03_ordenacao import selection_sort, divide_and_conquer_sort, quick_sort
+from AulasPraticas.AP_03_ordenacao import selection_sort, divide_and_conquer_sort, quick_sort
 
 sys.setrecursionlimit(max(10000, 6000))
 
