@@ -1,4 +1,4 @@
-# Relatório — <seu nome> (<sua matrícula>)
+# Relatório — Matheus Souza - 3467
 
 Relatório do projeto, preenchido na sua branch. Cada marco acrescenta a sua seção. Responda com as suas palavras e com
 os números da sua execução; cada resposta cabe em até 6 linhas, além das tabelas.
@@ -7,15 +7,23 @@ os números da sua execução; cada resposta cabe em até 6 linhas, além das ta
 
 ### Ambiente
 
-<!-- Cole aqui a saída de `which python` e da Etapa 0 do `python marco1.py`. -->
+/home/al.matheus.souza/venvs/prog2-venv/bin/python
+
+=== Etapa 0: ambiente ===
+Python 3.13.15 | NumPy 2.5.3 | fornecido 1.0
+
 
 ### R1 — Expressões regulares
 
 <!-- Uma string que re.match aceita e re.fullmatch rejeita com o padrão de tag; consequência para valida_tag. -->
+"CA123423876", a consequência seria que a função valida_tag aprovaria string errôneamente, pois avaliaria apenas os primeiros digitos ignorando o restante, a solução seria usar fullmatch para garantir a integridade exata da tag.
+
 
 ### R2 — Linhas inválidas
 
 <!-- Por que ler_log devolve as linhas descartadas; uma situação real em que descartar em silêncio esconderia um problema. -->
+Para podermos fazer a conferência de o que está sendo jogado fora, verificar se nada está sendo descartado indevidamente. Uma falha fisica de rede num
+transmissor de pressão PT102 que truncasse uma mensagem de alarme critica poderia causar prejuizos para a operação
 
 ### R3 — Late binding
 
