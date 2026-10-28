@@ -82,3 +82,13 @@ Os testes de regressão criados foram `test_kahan_compensacao_um_milhao_pulsos` 
 ### R10 — Precisão × exatidão
 
 A precisão está associada à dispersão aleatória das medições, representada pelo desvio padrão amostral, que foi praticamente idêntico para ambas as curvas (~0,54 kPa). A exatidão reflete o viés em relação ao valor real de referência (380,0 kPa): a spline obteve viés de apenas -0,027 kPa (alta exatidão), enquanto a curva linear apresentou viés de -1,856 kPa (baixa exatidão). A média de quase 600 leituras reduz a incerteza aleatória, mas não elimina o viés da curva linear por tratar-se de um erro sistemático de modelagem decorrente de tentar aproximar uma resposta não linear por uma reta.
+
+## Marco 3
+
+### R11 — Bissecção × Newton
+
+A bissecção realiza o mesmo número de iterações (44) para qualquer Reynolds porque o número de divisões depende apenas do tamanho do intervalo inicial $[a, b]$ e da tolerância desejada ($L_k = L_0 / 2^k$), independente dos valores da função. A ordem de convergência 2 (quadrática) significa que o número de dígitos decimais exatos aproximadamente dobra a cada iteração. O método de Newton falha quando a derivada no ponto é nula ($f'(x) = 0$), quando o ponto inicial $x_0$ está muito distante da raiz ou quando oscila em pontos de inflexão, cenários onde a bissecção continua funcionando desde que haja troca de sinal ($f(a) \cdot f(b) < 0$).
+
+### R12 — Issue #9
+
+Os testes de regressão criados em `testes/test_operacao.py` foram `test_newton_convergencia_quadratica` e `test_newton_poucas_iteracoes_para_precisao_alta`. Calcular a derivada uma única vez fixa a inclinação da tangente no ponto inicial $x_0$, transformando o algoritmo no método de Newton modificado/cordas, o que reduz o erro por um fator constante a cada passo e degrada a convergência para linear ($p \approx 1$). Os testes de aceitação originais não detectaram o defeito porque apenas verificavam se o valor final da raiz estava correto dentro da tolerância, sem checar a ordem de convergência ou o número limite de iterações.
