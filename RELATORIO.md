@@ -62,3 +62,23 @@ E a indexação de elemento individual (`s[0]`) e métodos de agregação (`s.me
 O sintoma era o retorno de N - n elementos em vez de N - n + 1$ (ex.: 570 valores para 600 leituras e janela n=30). O defeito foi identificado pelo teste de regressão `test_media_movel_tamanho_correto`. A causa ocorria no fatiamento incorreto da soma acumulada (`cumsum`), que omitia o termo inicial necessário para calcular a primeira média do intervalo. 
 
 A correção ajustou os índices do fatiamento da `cumsum` (inserindo o zero inicial no cálculo da diferença de janelas), sem laços e preservando o tipo `SerieTemporal`. Os testes de aceitação originais não pegaram o defeito porque comparavam apenas os valores das posições existentes, sem validar o tamanho exato do array retornado. Outro caso não coberto por eles é o de janela de tamanho unitário (n=1), validado pelo teste `test_media_movel_janela_um`.
+
+## Marco 2
+
+### Ambiente
+
+/home/al.matheus.souza/venvs/prog2-venv/bin/python
+=== Etapa 0: ambiente ===
+Python 3.13.15 | NumPy 2.5.4 | SciPy 1.18.1 | fornecido 4.0 | matrícula 3467
+
+### R8 — Derivada numérica
+
+O erro diminui entre h = 1 e h = 1e-5 porque nessa faixa domina o erro de truncamento da aproximação por diferenças finitas, que diminui proporcionalmente a h[cite: 1, 2]. Abaixo de h = 1e-5, o erro passa a crescer porque passa a dominar o erro de arredondamento por cancelamento catastrófico ao subtrair dois números de ponto flutuante quase idênticos. Em h = 1e-14, a limitação de precisão de 64 bits faz com que 1000 + 1e-14 seja igual a 1000, resultando em f(x+h) - f(x) = 0 e derivada estimada zero, fazendo com que o erro seja exatamente o valor absoluto da própria derivada exata (0,2134).
+
+### R9 — Issue #7
+
+Os testes de regressão criados foram `test_kahan_compensacao_um_milhao_pulsos` e `test_kahan_supera_ingenuo_em_somas_longas`. Em ponto flutuante, a expressão incorreta `t - (s + y)` avalia primeiro `(s + y)`, que resulta exatamente em `t`, fazendo com que a diferença dê zero e anule a compensação de Kahan[cite: 3]. Já a versão corrigida `(t - s) - y` avalia primeiro `(t - s)` para isolar a parcela efetivamente somada a `s` e recuperar o erro de arredondamento[cite: 3]. Os testes de aceitação originais não detectaram o erro porque somavam poucas parcelas ou usavam tolerâncias amplas onde o acúmulo de erro ainda não ultrapassava os limites.
+
+### R10 — Precisão × exatidão
+
+A precisão está associada à dispersão aleatória das medições, representada pelo desvio padrão amostral, que foi praticamente idêntico para ambas as curvas (~0,54 kPa). A exatidão reflete o viés em relação ao valor real de referência (380,0 kPa): a spline obteve viés de apenas -0,027 kPa (alta exatidão), enquanto a curva linear apresentou viés de -1,856 kPa (baixa exatidão). A média de quase 600 leituras reduz a incerteza aleatória, mas não elimina o viés da curva linear por tratar-se de um erro sistemático de modelagem decorrente de tentar aproximar uma resposta não linear por uma reta.
