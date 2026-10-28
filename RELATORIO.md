@@ -13,15 +13,15 @@ Python 3.13.15 | NumPy 2.5.4 | fornecido 4.0
 
 ### R1 — Expressões regulares
 
-A string `"PT101 extra"` é aceita por `re.match` com o padrão `[A-Z]{1,2}\d{1,3}` porque ele valida apenas o início da cadeia de caracteres. Já o `re.fullmatch` a rejeita por exigir que a string inteira case com a expressão. Se `valida_tag` utilizasse `match`, entradas com sufixos inválidos ou espaços sobressalentes (como `"PT101 "` ou `"PT1010"`) seriam aceitas incorretamente como tags válidas[cite: 2].
+A string `"PT101 extra"` é aceita por `re.match` com o padrão `[A-Z]{1,2}\d{1,3}` porque ele valida apenas o início da cadeia de caracteres. Já o `re.fullmatch` a rejeita por exigir que a string inteira case com a expressão. Se `valida_tag` utilizasse `match`, entradas com sufixos inválidos ou espaços sobressalentes (como `"PT101 "` ou `"PT1010"`) seriam aceitas incorretamente como tags válidas.
 
 ### R2 — Linhas inválidas
 
-A função `ler_log` devolve as linhas descartadas para permitir auditoria, rastreabilidade e diagnóstico de falhas de comunicação[cite: 2]. Em uma operação real, o descarte silencioso esconderia ruídos na rede, pacotes corrompidos ou mal funcionamento de um sensor. Isso levaria a equipe a operar a estação sem notar que leituras críticas estavam sendo perdidas na transmissão[cite: 2].
+A função `ler_log` devolve as linhas descartadas para permitir auditoria, rastreabilidade e diagnóstico de falhas de comunicação. Em uma operação real, o descarte silencioso esconderia ruídos na rede, pacotes corrompidos ou mal funcionamento de um sensor. Isso levaria a equipe a operar a estação sem notar que leituras críticas estavam sendo perdidas na transmissão.
 
 ### R3 — Late binding
 
-O valor `409,5` ocorre porque, na versão errada, o escopo da lambda busca a variável `fator` no momento da execução (*late binding*), fazendo com que todas as funções usem o último fator iterado no dicionário (o do `FT201`, igual a `0,1`, resultando em $4095 \times 0,1 = 409,5$)[cite: 2]. A nossa `criar_conversores` resolve isso usando o parâmetro padrão na lambda (`f=fator`), o que força a vinculação antecipada (*early binding*) do fator exato de cada tag[cite: 2].
+O valor `409,5` ocorre porque, na versão errada, o escopo da lambda busca a variável `fator` no momento da execução (*late binding*), fazendo com que todas as funções usem o último fator iterado no dicionário (o do `FT201`, igual a `0,1`, resultando em $4095 \times 0,1 = 409,5$), nossa `criar_conversores` resolve isso usando o parâmetro padrão na lambda (`f=fator`), o que força a vinculação antecipada (*early binding*) do fator exato de cada tag.
 
 ### R4 — Escala nominal
 
@@ -73,11 +73,11 @@ Python 3.13.15 | NumPy 2.5.4 | SciPy 1.18.1 | fornecido 4.0 | matrícula 3467
 
 ### R8 — Derivada numérica
 
-O erro diminui entre h = 1 e h = 1e-5 porque nessa faixa domina o erro de truncamento da aproximação por diferenças finitas, que diminui proporcionalmente a h[cite: 1, 2]. Abaixo de h = 1e-5, o erro passa a crescer porque passa a dominar o erro de arredondamento por cancelamento catastrófico ao subtrair dois números de ponto flutuante quase idênticos. Em h = 1e-14, a limitação de precisão de 64 bits faz com que 1000 + 1e-14 seja igual a 1000, resultando em f(x+h) - f(x) = 0 e derivada estimada zero, fazendo com que o erro seja exatamente o valor absoluto da própria derivada exata (0,2134).
+O erro diminui entre h = 1 e h = 1e-5 porque nessa faixa domina o erro de truncamento da aproximação por diferenças finitas, que diminui proporcionalmente a h. Abaixo de h = 1e-5, o erro passa a crescer porque passa a dominar o erro de arredondamento por cancelamento catastrófico ao subtrair dois números de ponto flutuante quase idênticos. Em h = 1e-14, a limitação de precisão de 64 bits faz com que 1000 + 1e-14 seja igual a 1000, resultando em f(x+h) - f(x) = 0 e derivada estimada zero, fazendo com que o erro seja exatamente o valor absoluto da própria derivada exata (0,2134).
 
 ### R9 — Issue #7
 
-Os testes de regressão criados foram `test_kahan_compensacao_um_milhao_pulsos` e `test_kahan_supera_ingenuo_em_somas_longas`. Em ponto flutuante, a expressão incorreta `t - (s + y)` avalia primeiro `(s + y)`, que resulta exatamente em `t`, fazendo com que a diferença dê zero e anule a compensação de Kahan[cite: 3]. Já a versão corrigida `(t - s) - y` avalia primeiro `(t - s)` para isolar a parcela efetivamente somada a `s` e recuperar o erro de arredondamento[cite: 3]. Os testes de aceitação originais não detectaram o erro porque somavam poucas parcelas ou usavam tolerâncias amplas onde o acúmulo de erro ainda não ultrapassava os limites.
+Os testes de regressão criados foram `test_kahan_compensacao_um_milhao_pulsos` e `test_kahan_supera_ingenuo_em_somas_longas`. Em ponto flutuante, a expressão incorreta `t - (s + y)` avalia primeiro `(s + y)`, que resulta exatamente em `t`, fazendo com que a diferença dê zero e anule a compensação de Kahan. Já a versão corrigida `(t - s) - y` avalia primeiro `(t - s)` para isolar a parcela efetivamente somada a `s` e recuperar o erro de arredondamento. Os testes de aceitação originais não detectaram o erro porque somavam poucas parcelas ou usavam tolerâncias amplas onde o acúmulo de erro ainda não ultrapassava os limites.
 
 ### R10 — Precisão × exatidão
 
@@ -92,3 +92,13 @@ A bissecção realiza o mesmo número de iterações (44) para qualquer Reynolds
 ### R12 — Issue #9
 
 Os testes de regressão criados em `testes/test_operacao.py` foram `test_newton_convergencia_quadratica` e `test_newton_poucas_iteracoes_para_precisao_alta`. Calcular a derivada uma única vez fixa a inclinação da tangente no ponto inicial $x_0$, transformando o algoritmo no método de Newton modificado/cordas, o que reduz o erro por um fator constante a cada passo e degrada a convergência para linear ($p \approx 1$). Os testes de aceitação originais não detectaram o defeito porque apenas verificavam se o valor final da raiz estava correto dentro da tolerância, sem checar a ordem de convergência ou o número limite de iterações.
+
+## Marco 4
+
+### R13 — Integração e descontinuidade
+
+A teoria de convergência das regras de quadratura (Trapézio $O(h^2)$ e Simpson $O(h^4)$) exige que a função seja suave e tenha derivadas contínuas no intervalo de integração. As mudanças bruscas na tarifa de energia às 18 h e 21 h introduzem descontinuidades do tipo salto na função de custo. Nos subintervalos que contêm esses saltos, o erro local passa a depender diretamente da altura do salto e não mais da derivada, reduzindo a ordem de convergência global para 1. Ao integrar cada faixa tarifária separadamente, as descontinuidades ficam posicionadas exatamente nos limites dos intervalos de integração, tornando a função suave dentro de cada faixa e restaurando as ordens teóricas 2 e 4.
+
+### R14 — Issue #11
+
+Os testes de regressão criados em `testes/test_dia.py` foram `test_trapezio_tabela_malha_irregular` e `test_trapezio_tabela_intervalos_faltantes`. A causa do defeito era a suposição de que o passo entre as medições era constante ($h = x_1 - x_0$), calculando a área como se todos os subintervalos tivessem a mesma largura. Os testes de aceitação originais não pegaram o defeito porque utilizavam apenas tabelas com espaçamento uniforme. A regra de Simpson não serve para o registro do dia porque exige uma malha estritamente uniforme e número par de subintervalos, requisito violado pelas 8 leituras perdidas pelo SCADA.
