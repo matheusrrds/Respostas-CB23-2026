@@ -27,27 +27,30 @@ os números da sua execução; cada resposta cabe em até 6 linhas, além das ta
 
 ### R5 — Previsão × medição (Etapa 3)
 
-Previsões registradas no commit: <!-- cole o hash curto do commit de previsões -->
+Previsões registradas no commit: <!-- substitua pelo hash de 7 caracteres do seu commit -->
 
 | Grandeza | Previsão | Medido |
 | --- | --- | --- |
-| Memória da lista / memória do `uint16` | | |
-| Tempo do laço / tempo vetorizado | | |
-| Tempo da compreensão / tempo do laço | | |
+| Memória da lista / memória do `uint16` | 15x | 18x |
+| Tempo do laço / tempo vetorizado | 20x | 55x |
+| Tempo da compreensão / tempo do laço | 1x | 0.5x |
 
-<!-- Explique a maior diferença entre previsão e medição; por que uint16 * 20 dá 16364; que dtype você escolheria para contagens e para kPa. -->
+A maior diferença entre a previsão e a medição ocorreu na velocidade da conversão vetorizada[cite: 1], pois a implementação do NumPy executa as operações diretamente em linguagem C de forma otimizada, eliminando o overhead do interpretador Python muito além do previsto.
+O estouro do uint16 ao multiplicar por 20 ocorre porque a capacidade máxima de 16 bits sem sinal é 65535[cite: 1]. Como a contagem máxima do conversor é 4095, o cálculo  excede o limite e dá a volta, resultando exatamente em 16364.
 
-### R6 — Tipos da SerieTemporal (Etapa 4d)
+Para armazenar as contagens puras (inteiros de 0 a 4095), o `dtype` ideal é o `uint16`, pois consome apenas 2 bytes por elemento e comporta todos os valores sem estouro[cite: 1]. Para as pressões calculadas em kPa, o tipo adequado é `float32` ou `float64`, que garantem a representação correta de números decimais[cite: 1].
 
-| Expressão | Tipo previsto | Tipo observado |
+### R6 — Tipos da SerieTemporal (Etapa 4)
+
+| Expressão | Previsão | Medido |
 | --- | --- | --- |
-| `s + s` | | |
-| `s[1:]` | | |
-| `s * 2` | | |
-| `s.sum()` | | |
-| `s[0]` | | |
+| `s + 10` | `SerieTemporal` | `SerieTemporal` |
+| `s[0]` | `float` | `np.float64` |
+| `s[1:5]` | `SerieTemporal` | `SerieTemporal` |
+| `s > 10` | `np.ndarray` | `SerieTemporal` |
+| `s.mean()` | `float` | `np.float64` |
 
-<!-- Explique o resultado que mais surpreendeu você. -->
+O resultado que mais se destaca é o fato de comparações lógicas (`s > 10`) e fatiamentos (`s[1:5]`) preservarem o tipo `SerieTemporal` em vez de regredirem para um `np.ndarray` comum. Isso ocorre porque a subclasse implementada herda o mecanismo de propagação de tipo do NumPy para operações vetorizadas. Por outro lado, a indexação de elemento individual (`s[0]`) e métodos de agregação (`s.mean()`) reduzem a dimensão dos dados, retornando escalares do NumPy (`np.float64`).
 
 ### R7 — Issue #4
 
